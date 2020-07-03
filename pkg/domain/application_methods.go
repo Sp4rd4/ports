@@ -10,7 +10,10 @@ import (
 
 var (
 	// nolint
-	json = jsoniter.ConfigFastest
+	json = jsoniter.Config{
+		EscapeHTML:                    false,
+		ObjectFieldMustBeSimpleString: true,
+	}.Froze()
 
 	ErrTypeAssertion = errors.New("type assertion .([]byte) failed")
 	ErrUnmarshal     = errors.New("byte unmarshal failed")

@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS "ports" (
   "province" varchar,
   "timezone" varchar,
   "unlocs" varchar[],
-  "code" varchar,
+  "code" varchar
 );
 
