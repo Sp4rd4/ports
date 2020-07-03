@@ -28,6 +28,8 @@ type app struct {
 	GRPCPort           string `env:"GRPC_PORT,required"`
 	DBHost             string `env:"DATABASE_URL,required"`
 	DBMigrationsFolder string `env:"MIGRATIONS_FOLDER" envDefault:"migrations"`
+	DBMaxIdleConn      int    `env:"POSTGRES_MAX_IDLE_CONN" envDefault:"100"`
+	DBMaxConn          int    `env:"POSTGRES_MAX_CONN" envDefault:"100"`
 }
 
 func newApp(logger *zap.Logger) (app, error) {
@@ -44,6 +46,8 @@ func newApp(logger *zap.Logger) (app, error) {
 	if err != nil {
 		return app{}, fmt.Errorf("db connect: %w", err)
 	}
+	db.SetMaxIdleConns(appVar.DBMaxIdleConn)
+	db.SetMaxOpenConns(appVar.DBMaxConn)
 	storage := postgres.New(db)
 	err = storage.Migrate(dbMigrate, appVar.DBMigrationsFolder)
 	if err != nil {
