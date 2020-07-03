@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -16,12 +17,17 @@ import (
 	"github.com/sp4rd4/ports/pkg/storage/postgres"
 	"go.uber.org/zap"
 	ngrpc "google.golang.org/grpc"
+
+	// db driver
+	_ "github.com/lib/pq"
 )
 
 type app struct {
-	grpcServer *grpc.PortServer
-	logger     *zap.Logger
-	GRPCPort   string `env:"GRPC_PORT,required"`
+	grpcServer         *grpc.PortServer
+	logger             *zap.Logger
+	GRPCPort           string `env:"GRPC_PORT,required"`
+	DBHost             string `env:"DATABASE_URL,required"`
+	DBMigrationsFolder string `env:"MIGRATIONS_FOLDER" envDefault:"migrations"`
 }
 
 func newApp(logger *zap.Logger) (app, error) {
@@ -30,13 +36,18 @@ func newApp(logger *zap.Logger) (app, error) {
 		return app{}, err
 	}
 
-	storageConfig := postgres.Config{}
-	if err := env.Parse(&storageConfig); err != nil {
-		return app{}, fmt.Errorf("grpc client config read: %w", err)
-	}
-	storage, err := postgres.New(storageConfig)
+	db, err := sql.Open("postgres", appVar.DBHost)
 	if err != nil {
-		return app{}, fmt.Errorf("grpc client init: %w", err)
+		return app{}, fmt.Errorf("db connect: %w", err)
+	}
+	dbMigrate, err := sql.Open("postgres", appVar.DBHost)
+	if err != nil {
+		return app{}, fmt.Errorf("db connect: %w", err)
+	}
+	storage := postgres.New(db)
+	err = storage.Migrate(dbMigrate, appVar.DBMigrationsFolder)
+	if err != nil {
+		return app{}, fmt.Errorf("postgres migrate: %w", err)
 	}
 
 	portService := service.NewPortService(storage)

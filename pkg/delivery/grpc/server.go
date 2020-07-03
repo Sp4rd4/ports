@@ -47,11 +47,13 @@ func (ps *PortServer) Save(ctx context.Context, req *proto.Port) (*ptypes.Empty,
 		ps.logger.Error(fmt.Errorf("[%v] save: %w", errorTag, err).Error())
 	}
 
-	return nil, convertErrToProto(err)
+	return &ptypes.Empty{}, convertErrToProto(err)
 }
 
 func convertErrToProto(err error) error {
 	switch {
+	case err == nil:
+		return nil
 	case errors.Is(err, domain.ErrNotFound):
 		return status.Error(codes.NotFound, domain.ErrNotFound.Error())
 	case errors.Is(err, service.ErrPortMissingID):
