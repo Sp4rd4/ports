@@ -2,10 +2,10 @@ FROM golang:1.14.4-alpine3.12 as build
 
 WORKDIR /ports
 
+COPY ./go.* ./
 COPY ./vendor ./vendor
 COPY ./pkg ./pkg
 COPY ./cmd/clientapi/ ./cmd/clientapi
-COPY ./go.* ./
 
 WORKDIR /ports/cmd/clientapi
 
