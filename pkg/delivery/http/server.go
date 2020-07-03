@@ -16,7 +16,10 @@ import (
 
 const errorTag = "http"
 
-var json = jsoniter.ConfigFastest
+var json = jsoniter.Config{
+	EscapeHTML:                    false,
+	ObjectFieldMustBeSimpleString: true, // do not unescape object field
+}.Froze()
 
 type PortService interface {
 	Get(id string) (*domain.Port, error)
@@ -27,9 +30,9 @@ type PortController struct {
 	logger  *zap.Logger
 }
 
-func New(service PortService, logger *zap.Logger) *PortController {
+func New(srvc PortService, logger *zap.Logger) *PortController {
 	return &PortController{
-		service: service,
+		service: srvc,
 		logger:  logger,
 	}
 }
