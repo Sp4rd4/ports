@@ -1,0 +1,1 @@
+To run create ports.json file with ports data, if not point to existing file in docker-compose file.
