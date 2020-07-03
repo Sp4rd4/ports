@@ -20,13 +20,13 @@ type storage struct {
 }
 
 type Config struct {
-	PortsDomainHost string `env:"PORTS_DOMAIN_HOST,required"`
+	PortDomainHost string `env:"PORTS_DOMAIN_HOST,required"`
 }
 
 func New(conf Config) (domain.PortRepository, error) {
-	conn, err := grpc.Dial(conf.PortsDomainHost, grpc.WithInsecure())
+	conn, err := grpc.Dial(conf.PortDomainHost, grpc.WithInsecure())
 	if err != nil {
-		return nil, fmt.Errorf("[%v] portsdomain connect: %w", errorTag, err)
+		return nil, fmt.Errorf("[%v] portdomain connect: %w", errorTag, err)
 	}
 
 	return &storage{client: proto.NewPortsClient(conn)}, nil
