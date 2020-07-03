@@ -28,8 +28,8 @@ type PortServer struct {
 	logger     *zap.Logger
 }
 
-func New(service PortService, logger *zap.Logger) *PortServer {
-	return &PortServer{service: service, logger: logger}
+func New(srvc PortService, logger *zap.Logger) *PortServer {
+	return &PortServer{service: srvc, logger: logger}
 }
 
 func (ps *PortServer) Get(ctx context.Context, req *proto.PortRequest) (*proto.Port, error) {
@@ -63,5 +63,4 @@ func convertErrToProto(err error) error {
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}
-
 }

@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/lib/pq"
 	"github.com/sp4rd4/ports/pkg/domain"
 	"github.com/sp4rd4/ports/pkg/proto"
 	"google.golang.org/grpc/codes"
