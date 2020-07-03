@@ -32,7 +32,7 @@ func (s LoadService) Load() {
 	ports := s.loader.Load()
 	for p := range ports {
 		lp := p
-		err := ants.Submit(func() {
+		err := s.pool.Submit(func() {
 			err := s.storage.Save(lp)
 			if err != nil {
 				s.logger.Error(fmt.Errorf("[%v] save: %w", errorTagLoader, err).Error())

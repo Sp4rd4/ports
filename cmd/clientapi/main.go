@@ -39,7 +39,7 @@ type app struct {
 	HTTPIdleTimeout  time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"120s"`
 	PortDomainHost   string        `env:"PORTS_DOMAIN_HOST,required"`
 	LoaderBufferSize int           `env:"JSON_BUFFER_SIZE" envDefault:"512"`
-	PoolSize         int           `env:"WORKER_POOL_SIZE" envDefault:"512"`
+	PoolSize         int           `env:"WORKER_POOL_SIZE" envDefault:"100"`
 }
 
 func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
@@ -114,6 +114,22 @@ func (a *app) serve(ctx context.Context) {
 	a.logger.Info("stopped http clientapi")
 }
 
+func meterReader(r io.Reader, size int64) io.Reader {
+	meteredReader := progress.NewReader(r)
+
+	// Start a goroutine printing progress
+	go func() {
+		ctx := context.Background()
+		progressChan := progress.NewTicker(ctx, meteredReader, size, loadNotifyInterval)
+		for p := range progressChan {
+			fmt.Printf("%.2f%% of json processed...\n", p.Percent())
+		}
+		fmt.Println("json is  processed.")
+	}()
+
+	return meteredReader
+}
+
 func main() {
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -138,20 +154,4 @@ func main() {
 	go app.loadService.Load()
 
 	app.serve(ctx)
-}
-
-func meterReader(r io.Reader, size int64) io.Reader {
-	meteredReader := progress.NewReader(r)
-
-	// Start a goroutine printing progress
-	go func() {
-		ctx := context.Background()
-		progressChan := progress.NewTicker(ctx, meteredReader, size, loadNotifyInterval)
-		for p := range progressChan {
-			fmt.Printf("%.2f%% of json processed...\n", p.Percent())
-		}
-		fmt.Println("json is  processed.")
-	}()
-
-	return meteredReader
 }
