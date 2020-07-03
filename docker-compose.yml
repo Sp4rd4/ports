@@ -11,6 +11,10 @@ services:
       - portdomain
     ports:
       - "80:80"
+    volumes:
+      - .:/user/share
+    environment:
+      PORTS_FILE: /user/share/ports.json
     env_file:
       - .env/.clientapi
     mem_limit: 128m
@@ -39,6 +43,7 @@ services:
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'ports'
 
 volumes:
   db:
