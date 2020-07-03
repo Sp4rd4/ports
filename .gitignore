@@ -1,0 +1,15 @@
+.vscode
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+docs/
+.idea/
+.DS_Store
+.env/*
+!.env/*.example
+.httr-oauth
+*.json

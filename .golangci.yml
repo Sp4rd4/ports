@@ -1,0 +1,65 @@
+
+run:
+  concurrency: 6
+  deadline: 30s
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - pkg/proto/
+  modules-download-mode: vendor
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  govet:
+      check-shadowing: true
+  golint:
+      min-confidence: 0.5
+  gocyclo:
+      min-complexity: 20
+  maligned:
+      suggest-new: true
+  dupl:
+      threshold: 100
+  goconst:
+      min-len: 3
+      min-occurrences: 3
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
+    tab-width: 1
+  unused:
+    check-exported: true
+  unparam:
+    check-exported: true
+  nakedret:
+      max-func-lines: 0
+  gocritic:
+    enabled-tags:
+      - performance
+      - style
+      - experimental
+    disabled-checks:
+      - sloppyReassign
+      - wrapperFunc
+linters:
+  enable-all: true
+  disable:
+    - wsl
+
+issues:
+  exclude-rules:
+    - text: "should have comment or be unexported"
+      linters:
+        - govet
+    - path: ".*_test.go"
+      linters:
+        - scopelint
+        - gosec
+  max-per-linter: 0
+  max-same-issues: 0
+  new: false

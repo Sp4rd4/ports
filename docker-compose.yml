@@ -1,0 +1,44 @@
+version: '2.4'
+
+services:
+  clientapi:
+    build:
+      context: .
+      dockerfile: docker/clientapi/Dockerfile
+      target: clientapi
+    restart: unless-stopped
+    depends_on:
+      - portdomain
+    ports:
+      - "80:80"
+    env_file:
+      - .env/.clientapi
+    mem_limit: 128m
+    memswap_limit: 128m
+
+  portdomain:
+    build:
+      context: .
+      dockerfile: docker/portdomain/Dockerfile
+      target: portdomain
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    expose:
+      - 8080
+    env_file:
+      - .env/.portdomain
+
+  postgres:
+    image: postgres:12.3-alpine
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+
+volumes:
+  db:
