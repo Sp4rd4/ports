@@ -8,21 +8,21 @@ import (
 	"github.com/sp4rd4/ports/pkg/domain/loader"
 )
 
-type loaderJson struct {
+type loaderJSON struct {
 	reader     io.Reader
 	bufferSize int
 	cancel     <-chan struct{}
 }
 
 func NewLoader(reader io.Reader, bufferSize int, cancel <-chan struct{}) loader.Ports {
-	return loaderJson{
+	return loaderJSON{
 		reader:     reader,
 		bufferSize: bufferSize,
 		cancel:     cancel,
 	}
 }
 
-func (lj loaderJson) Load() <-chan *domain.Port {
+func (lj loaderJSON) Load() <-chan *domain.Port {
 	iter := jsoniter.Parse(jsoniter.ConfigFastest, lj.reader, lj.bufferSize)
 	data := make(chan *domain.Port)
 
@@ -35,7 +35,7 @@ func (lj loaderJson) Load() <-chan *domain.Port {
 	return data
 }
 
-func (lj loaderJson) iterate(iter *jsoniter.Iterator, data chan *domain.Port) {
+func (lj loaderJSON) iterate(iter *jsoniter.Iterator, data chan *domain.Port) {
 	defer close(data)
 
 	for field := iter.ReadObject(); field != ""; field = iter.ReadObject() {
@@ -52,7 +52,7 @@ func (lj loaderJson) iterate(iter *jsoniter.Iterator, data chan *domain.Port) {
 	}
 }
 
-func (lj loaderJson) iterateCancellable(iter *jsoniter.Iterator, data chan *domain.Port) {
+func (lj loaderJSON) iterateCancellable(iter *jsoniter.Iterator, data chan *domain.Port) {
 	defer close(data)
 
 	for field := iter.ReadObject(); field != ""; field = iter.ReadObject() {
