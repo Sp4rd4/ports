@@ -8,7 +8,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/sp4rd4/ports/pkg/domain"
 	"github.com/sp4rd4/ports/pkg/proto"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -19,17 +18,8 @@ type storage struct {
 	client proto.PortsClient
 }
 
-type Config struct {
-	PortDomainHost string `env:"PORTS_DOMAIN_HOST,required"`
-}
-
-func New(conf Config) (domain.PortRepository, error) {
-	conn, err := grpc.Dial(conf.PortDomainHost, grpc.WithInsecure())
-	if err != nil {
-		return nil, fmt.Errorf("[%v] portdomain connect: %w", errorTag, err)
-	}
-
-	return &storage{client: proto.NewPortsClient(conn)}, nil
+func New(client proto.PortsClient) domain.PortRepository {
+	return &storage{client: client}
 }
 
 func (s storage) Save(port *domain.Port) error {
@@ -50,5 +40,5 @@ func (s storage) Get(id string) (*domain.Port, error) {
 		return nil, fmt.Errorf("[%v] save: %w", errorTag, err)
 	}
 
-	return proto.PortProtoToDomain(port), fmt.Errorf("[%v] save: %w", errorTag, err)
+	return proto.PortProtoToDomain(port), nil
 }

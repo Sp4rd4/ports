@@ -28,15 +28,11 @@ func PortProtoToDomain(p *Port) *domain.Port {
 	if p == nil {
 		return &domain.Port{}
 	}
-	return &domain.Port{
-		ID:   p.Id,
-		Name: p.Name,
-		City: p.City,
-		Code: p.Code,
-		Coordinates: domain.Location{
-			Latitude:  p.Coordinates.Latitude,
-			Longitude: p.Coordinates.Longitude,
-		},
+	port := &domain.Port{
+		ID:       p.Id,
+		Name:     p.Name,
+		City:     p.City,
+		Code:     p.Code,
 		Country:  p.Country,
 		Alias:    p.Alias,
 		Regions:  p.Regions,
@@ -44,4 +40,11 @@ func PortProtoToDomain(p *Port) *domain.Port {
 		Timezone: p.Timezone,
 		Unlocs:   p.Unlocs,
 	}
+	if p.Coordinates != nil {
+		port.Coordinates = domain.Location{
+			Latitude:  p.Coordinates.Latitude,
+			Longitude: p.Coordinates.Longitude,
+		}
+	}
+	return port
 }
