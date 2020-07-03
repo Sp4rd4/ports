@@ -14,14 +14,10 @@ type loaderJson struct {
 	cancel     <-chan struct{}
 }
 
-type Config struct {
-	BufferSize int `env:"JSON_BUFFER" envDefault:"512"`
-}
-
-func NewLoader(reader io.Reader, conf Config, cancel <-chan struct{}) loader.Ports {
+func NewLoader(reader io.Reader, bufferSize int, cancel <-chan struct{}) loader.Ports {
 	return loaderJson{
 		reader:     reader,
-		bufferSize: conf.BufferSize,
+		bufferSize: bufferSize,
 		cancel:     cancel,
 	}
 }
@@ -43,8 +39,14 @@ func (lj loaderJson) iterate(iter *jsoniter.Iterator, data chan *domain.Port) {
 	defer close(data)
 
 	for field := iter.ReadObject(); field != ""; field = iter.ReadObject() {
+		if iter.Error != nil {
+			return
+		}
 		p := &domain.Port{}
 		iter.ReadVal(p)
+		if iter.Error != nil {
+			return
+		}
 		p.ID = field
 		data <- p
 	}
@@ -54,6 +56,9 @@ func (lj loaderJson) iterateCancellable(iter *jsoniter.Iterator, data chan *doma
 	defer close(data)
 
 	for field := iter.ReadObject(); field != ""; field = iter.ReadObject() {
+		if iter.Error != nil {
+			return
+		}
 		select {
 		case <-lj.cancel:
 			return
@@ -62,6 +67,9 @@ func (lj loaderJson) iterateCancellable(iter *jsoniter.Iterator, data chan *doma
 
 		p := &domain.Port{}
 		iter.ReadVal(p)
+		if iter.Error != nil {
+			return
+		}
 		p.ID = field
 		data <- p
 	}
