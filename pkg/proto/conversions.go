@@ -4,7 +4,7 @@ import "github.com/sp4rd4/ports/pkg/domain"
 
 func PortDomainToProto(p *domain.Port) *Port {
 	if p == nil {
-		return nil
+		return &Port{}
 	}
 	return &Port{
 		Id:   p.ID,
@@ -26,7 +26,7 @@ func PortDomainToProto(p *domain.Port) *Port {
 
 func PortProtoToDomain(p *Port) *domain.Port {
 	if p == nil {
-		return nil
+		return &domain.Port{}
 	}
 	return &domain.Port{
 		ID:   p.Id,
