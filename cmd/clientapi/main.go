@@ -63,14 +63,8 @@ func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
 	}
 
 	portService := service.NewPortService(storage)
-	if err != nil {
-		return app{}, err
-	}
 
 	controller := http.New(portService, logger)
-	if err != nil {
-		return app{}, err
-	}
 
 	appVar.server = controller
 	appVar.logger = logger
@@ -97,7 +91,7 @@ func (a *app) serve(ctx context.Context) {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, nhttp.ErrServerClosed) {
-			a.logger.Fatal(fmt.Errorf("listen: %w", err).Error())
+			a.logger.Fatal(fmt.Errorf("serve: %w", err).Error())
 		}
 	}()
 	a.logger.Info("started http clientapi")
@@ -138,6 +132,8 @@ func main() {
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
+
+	go app.loadService.Load()
 
 	app.serve(ctx)
 }
