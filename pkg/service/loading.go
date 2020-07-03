@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/sp4rd4/ports/pkg/domain"
@@ -10,11 +9,6 @@ import (
 )
 
 const errorTagLoader = "load-service"
-
-var (
-	ErrPortMissingID = errors.New("port missing id")
-	ErrInvalidInput  = errors.New("invalid input")
-)
 
 type LoadService struct {
 	loader  loader.Ports
