@@ -1,0 +1,39 @@
+syntax = "proto3";
+package ports;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/sp4rd4/ports/pkg/proto";
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+service Ports {
+    rpc Save (Port) returns (google.protobuf.Empty) {}
+    rpc Get (PortRequest) returns (Port) {}
+}
+
+
+message Port {
+    string id = 1;
+    string name = 2;
+    string city = 3;
+    string country = 4;
+    repeated string alias = 5;
+    repeated string regions = 6;
+    Location coordinates = 7;
+    string province = 8;
+    string timezone = 9;
+    repeated string unlocs = 10;
+    string code = 11;
+}
+
+message Location {
+    double latitude  = 1;
+    double longitude = 2;
+}
+
+message PortRequest {
+    string id = 1;
+}
