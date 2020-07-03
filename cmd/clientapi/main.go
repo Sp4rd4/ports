@@ -16,25 +16,30 @@ import (
 	"github.com/machinebox/progress"
 	"github.com/sp4rd4/ports/pkg/delivery/http"
 	"github.com/sp4rd4/ports/pkg/jsonreader"
+	"github.com/sp4rd4/ports/pkg/proto"
 	"github.com/sp4rd4/ports/pkg/service"
 	"github.com/sp4rd4/ports/pkg/storage/grpcclient"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 const (
-	loadNotifyInterval = 3 * time.Second
+	loadNotifyInterval = 10 * time.Second
 	shutdownTimeout    = 4 * time.Second
 )
 
 type app struct {
-	server            *http.PortController
-	loadService       *service.LoadService
-	logger            *zap.Logger
-	PortsJSONFilepath string        `env:"PORTS_FILE,required"`
-	HTTPPort          string        `env:"HTTP_PORT,required"`
-	HTTPReadTimeout   time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"5s"`
-	HTTPWriteTimeout  time.Duration `env:"HTTP_WRITE_TIMEOUT" envDefault:"10s"`
-	HTTPIdleTimeout   time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"120s"`
+	server           *http.PortController
+	loadService      *service.LoadService
+	logger           *zap.Logger
+	PortsFilepath    string        `env:"PORTS_FILE,required"`
+	HTTPPort         string        `env:"HTTP_PORT,required"`
+	HTTPReadTimeout  time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"5s"`
+	HTTPWriteTimeout time.Duration `env:"HTTP_WRITE_TIMEOUT" envDefault:"10s"`
+	HTTPIdleTimeout  time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"120s"`
+	PortDomainHost   string        `env:"PORTS_DOMAIN_HOST,required"`
+	LoaderBufferSize int           `env:"JSON_BUFFER_SIZE" envDefault:"512"`
+	PoolSize         int           `env:"WORKER_POOL_SIZE" envDefault:"512"`
 }
 
 func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
@@ -43,23 +48,20 @@ func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
 		return app{}, err
 	}
 
-	storageConfig := grpcclient.Config{}
-	if err := env.Parse(&storageConfig); err != nil {
-		return app{}, fmt.Errorf("grpc client config read: %w", err)
-	}
-	storage, err := grpcclient.New(storageConfig)
+	conn, err := grpc.Dial(appVar.PortDomainHost, grpc.WithInsecure())
 	if err != nil {
-		return app{}, fmt.Errorf("grpc client init: %w", err)
+		return app{}, fmt.Errorf("portdomain connect: %w", err)
 	}
+	storage := grpcclient.New(proto.NewPortsClient(conn))
 
-	info, err := os.Stat(appVar.PortsJSONFilepath)
+	info, err := os.Stat(appVar.PortsFilepath)
 	if err != nil {
-		return app{}, fmt.Errorf("cannot get file info: %w", err)
+		return app{}, fmt.Errorf("get file info: %w", err)
 	}
 	size := info.Size()
-	file, err := os.Open(appVar.PortsJSONFilepath)
+	file, err := os.Open(appVar.PortsFilepath)
 	if err != nil {
-		return app{}, fmt.Errorf("cannot open file: %w", err)
+		return app{}, fmt.Errorf("open file: %w", err)
 	}
 
 	portService := service.NewPortService(storage)
@@ -69,12 +71,12 @@ func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
 	appVar.server = controller
 	appVar.logger = logger
 
-	loaderConfig := jsonreader.Config{}
-	if err := env.Parse(&loaderConfig); err != nil {
-		return app{}, fmt.Errorf("postgres config read: %w", err)
+	loader := jsonreader.NewLoader(meterReader(file, size), appVar.LoaderBufferSize, ctx.Done())
+	loadService, err := service.NewLoadService(loader, storage, logger, appVar.PoolSize)
+	if err != nil {
+		return app{}, fmt.Errorf("start service: %w", err)
 	}
-	loader := jsonreader.NewLoader(meterReader(file, size), loaderConfig, ctx.Done())
-	loadService := service.NewLoadService(loader, storage, appVar.logger)
+
 	appVar.loadService = &loadService
 
 	return appVar, nil
