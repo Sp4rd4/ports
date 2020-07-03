@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/sp4rd4/ports/pkg/delivery/grpc"
@@ -19,17 +18,13 @@ import (
 	ngrpc "google.golang.org/grpc"
 )
 
-const (
-	shutdownTimeout = 4 * time.Second
-)
-
 type app struct {
 	grpcServer *grpc.PortServer
 	logger     *zap.Logger
 	GRPCPort   string `env:"GRPC_PORT,required"`
 }
 
-func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
+func newApp(logger *zap.Logger) (app, error) {
 	appVar := app{}
 	if err := env.Parse(&appVar); err != nil {
 		return app{}, err
@@ -65,15 +60,15 @@ func (a *app) serve(ctx context.Context) {
 			a.logger.Fatal(fmt.Errorf("serve: %w", err).Error())
 		}
 	}()
-	a.logger.Info("started grpc portsdomain")
+	a.logger.Info("started grpc portdomain")
 
 	<-ctx.Done()
 
-	a.logger.Info("stopping grpc portsdomain")
+	a.logger.Info("stopping grpc portdomain")
 
 	a.grpcServer.GracefulStop()
 
-	a.logger.Info("stopped grpc portsdomain")
+	a.logger.Info("stopped grpc portdomain")
 }
 
 func main() {
@@ -92,7 +87,7 @@ func main() {
 		cancel()
 	}()
 
-	app, err := newApp(ctx, logger)
+	app, err := newApp(logger)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

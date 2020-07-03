@@ -31,7 +31,7 @@ type app struct {
 	loadService       *service.LoadService
 	logger            *zap.Logger
 	PortsJSONFilepath string        `env:"PORTS_FILE,required"`
-	Port              string        `env:"PORT,required"`
+	HTTPPort          string        `env:"HTTP_PORT,required"`
 	HTTPReadTimeout   time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"5s"`
 	HTTPWriteTimeout  time.Duration `env:"HTTP_WRITE_TIMEOUT" envDefault:"10s"`
 	HTTPIdleTimeout   time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"120s"`
@@ -86,7 +86,7 @@ func (a *app) serve(ctx context.Context) {
 		WriteTimeout: a.HTTPWriteTimeout,
 		IdleTimeout:  a.HTTPIdleTimeout,
 		Handler:      a.server,
-		Addr:         ":" + a.Port,
+		Addr:         ":" + a.HTTPPort,
 	}
 
 	go func() {
