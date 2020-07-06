@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
-	nhttp "net/http"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,7 +14,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/machinebox/progress"
-	"github.com/sp4rd4/ports/pkg/delivery/http"
+	"github.com/sp4rd4/ports/pkg/delivery/httpserver"
 	"github.com/sp4rd4/ports/pkg/jsonreader"
 	"github.com/sp4rd4/ports/pkg/proto"
 	"github.com/sp4rd4/ports/pkg/service"
@@ -29,7 +29,7 @@ const (
 )
 
 type app struct {
-	server           *http.PortController
+	server           *httpserver.Ports
 	loadService      *service.LoadService
 	logger           *zap.Logger
 	PortsFilepath    string        `env:"PORTS_FILE,required"`
@@ -64,13 +64,6 @@ func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
 		return app{}, fmt.Errorf("open file: %w", err)
 	}
 
-	portService := service.NewPortService(storage)
-
-	controller := http.New(portService, logger)
-
-	appVar.server = controller
-	appVar.logger = logger
-
 	loader := jsonreader.NewLoader(meterReader(file, size), appVar.LoaderBufferSize, ctx.Done())
 	loadService, err := service.NewLoadService(loader, storage, logger, appVar.PoolSize)
 	if err != nil {
@@ -79,11 +72,17 @@ func newApp(ctx context.Context, logger *zap.Logger) (app, error) {
 
 	appVar.loadService = &loadService
 
+	portService := service.NewPortService(storage)
+	controller := httpserver.New(portService, logger)
+
+	appVar.server = controller
+	appVar.logger = logger
+
 	return appVar, nil
 }
 
 func (a *app) serve(ctx context.Context) {
-	srv := &nhttp.Server{
+	srv := &http.Server{
 		ReadTimeout:  a.HTTPReadTimeout,
 		WriteTimeout: a.HTTPWriteTimeout,
 		IdleTimeout:  a.HTTPIdleTimeout,
@@ -92,7 +91,7 @@ func (a *app) serve(ctx context.Context) {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, nhttp.ErrServerClosed) {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			a.logger.Fatal(fmt.Errorf("serve: %w", err).Error())
 		}
 	}()

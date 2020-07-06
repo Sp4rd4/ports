@@ -12,18 +12,18 @@ import (
 	"syscall"
 
 	"github.com/caarlos0/env/v6"
-	"github.com/sp4rd4/ports/pkg/delivery/grpc"
+	"github.com/sp4rd4/ports/pkg/delivery/grpcserver"
 	"github.com/sp4rd4/ports/pkg/service"
 	"github.com/sp4rd4/ports/pkg/storage/postgres"
 	"go.uber.org/zap"
-	ngrpc "google.golang.org/grpc"
+	grpc "google.golang.org/grpc"
 
 	// db driver
 	_ "github.com/lib/pq"
 )
 
 type app struct {
-	grpcServer         *grpc.PortServer
+	grpcServer         *grpcserver.Ports
 	logger             *zap.Logger
 	GRPCPort           string `env:"GRPC_PORT,required"`
 	DBHost             string `env:"DATABASE_URL,required"`
@@ -56,7 +56,7 @@ func newApp(logger *zap.Logger) (app, error) {
 
 	portService := service.NewPortService(storage)
 
-	server := grpc.New(portService, logger)
+	server := grpcserver.New(portService, logger)
 
 	appVar.grpcServer = server
 	appVar.logger = logger
@@ -71,7 +71,7 @@ func (a *app) serve(ctx context.Context) {
 	}
 
 	go func() {
-		if err := a.grpcServer.Serve(lis); err != nil && !errors.Is(err, ngrpc.ErrServerStopped) {
+		if err := a.grpcServer.Serve(lis); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
 			a.logger.Fatal(fmt.Errorf("serve: %w", err).Error())
 		}
 	}()

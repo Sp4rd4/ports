@@ -75,12 +75,10 @@ func (s *PostgresTestSuite) SetupSuite() {
 		s.T().Fatalf("Unable to connect to postgres: %s", err)
 	}
 	storage := postgres.New(db)
-	println("db", db == nil)
 	err = storage.Migrate(dbMigrate, "migrations")
 	if !s.Nil(err, "Should migrate db with no error") {
 		s.T().Fatal("Migration failed")
 	}
-	println("db2", db == nil)
 	s.storage = storage
 	s.db = db
 }
