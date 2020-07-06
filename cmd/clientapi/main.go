@@ -39,7 +39,7 @@ type app struct {
 	HTTPIdleTimeout  time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"120s"`
 	PortDomainHost   string        `env:"PORTS_DOMAIN_HOST,required"`
 	LoaderBufferSize int           `env:"JSON_BUFFER_SIZE" envDefault:"512"`
-	PoolSize         int           `env:"WORKER_POOL_SIZE" envDefault:"100"`
+	PoolSize         int           `env:"WORKER_POOL_SIZE" envDefault:"50"`
 }
 
 func newApp(ctx context.Context, logger *zap.Logger) (app, error) {

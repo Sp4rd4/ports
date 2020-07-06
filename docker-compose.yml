@@ -14,7 +14,7 @@ services:
     volumes:
       - .:/user/share
     environment:
-      PORTS_FILE: /user/share/ports.json
+      PORTS_FILE: /user/share/ports_big.json
     env_file:
       - .env/.clientapi
     mem_limit: 128m
