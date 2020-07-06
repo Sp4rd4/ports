@@ -7,6 +7,10 @@ github.com/Microsoft/go-winio/pkg/guid
 # github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5
 ## explicit
 github.com/Nvveen/Gotty
+# github.com/ajg/form v1.5.1
+github.com/ajg/form
+# github.com/andybalholm/brotli v1.0.0
+github.com/andybalholm/brotli
 # github.com/caarlos0/env/v6 v6.3.0
 ## explicit
 github.com/caarlos0/env/v6
@@ -22,6 +26,12 @@ github.com/davecgh/go-spew/spew
 github.com/docker/go-connections/nat
 # github.com/docker/go-units v0.4.0
 github.com/docker/go-units
+# github.com/fatih/structs v1.1.0
+## explicit
+github.com/fatih/structs
+# github.com/gavv/httpexpect/v2 v2.1.0
+## explicit
+github.com/gavv/httpexpect/v2
 # github.com/go-chi/chi v4.1.2+incompatible
 ## explicit
 github.com/go-chi/chi
@@ -50,6 +60,11 @@ github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/struct
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
+# github.com/gorilla/websocket v1.4.2
+## explicit
+github.com/gorilla/websocket
 # github.com/gotestyourself/gotestyourself v2.2.0+incompatible
 ## explicit
 # github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
@@ -64,6 +79,9 @@ github.com/grpc-ecosystem/go-grpc-middleware/tags
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.0
 github.com/hashicorp/go-multierror
+# github.com/imkira/go-interpol v1.1.0
+## explicit
+github.com/imkira/go-interpol
 # github.com/jmoiron/sqlx v1.2.0
 ## explicit
 github.com/jmoiron/sqlx
@@ -71,6 +89,13 @@ github.com/jmoiron/sqlx/reflectx
 # github.com/json-iterator/go v1.1.10
 ## explicit
 github.com/json-iterator/go
+# github.com/klauspost/compress v1.10.10
+## explicit
+github.com/klauspost/compress/flate
+github.com/klauspost/compress/gzip
+github.com/klauspost/compress/zlib
+# github.com/klauspost/cpuid v1.3.1
+## explicit
 # github.com/konsorten/go-windows-terminal-sequences v1.0.3
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/lib/pq v1.7.0
@@ -131,6 +156,9 @@ github.com/panjf2000/ants/v2/internal
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
+# github.com/sergi/go-diff v1.1.0
+## explicit
+github.com/sergi/go-diff/diffmatchpatch
 # github.com/sirupsen/logrus v1.6.0
 ## explicit
 github.com/sirupsen/logrus
@@ -142,6 +170,28 @@ github.com/stretchr/testify/suite
 # github.com/treastech/logger v0.0.0-20180705232552-e381e9ecf2e3
 ## explicit
 github.com/treastech/logger
+# github.com/valyala/bytebufferpool v1.0.0
+github.com/valyala/bytebufferpool
+# github.com/valyala/fasthttp v1.14.0
+## explicit
+github.com/valyala/fasthttp
+github.com/valyala/fasthttp/fasthttputil
+github.com/valyala/fasthttp/stackless
+# github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb
+## explicit
+github.com/xeipuuv/gojsonpointer
+# github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
+github.com/xeipuuv/gojsonreference
+# github.com/xeipuuv/gojsonschema v1.2.0
+## explicit
+github.com/xeipuuv/gojsonschema
+# github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0
+github.com/yalp/jsonpath
+# github.com/yudai/gojsondiff v1.0.0
+github.com/yudai/gojsondiff
+github.com/yudai/gojsondiff/formatter
+# github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82
+github.com/yudai/golcs
 # go.uber.org/atomic v1.6.0
 go.uber.org/atomic
 # go.uber.org/multierr v1.5.0
@@ -154,6 +204,7 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
+go.uber.org/zap/zaptest/observer
 # golang.org/x/net v0.0.0-20200625001655-4c5254603344
 ## explicit
 golang.org/x/net/context
@@ -162,6 +213,7 @@ golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
+golang.org/x/net/publicsuffix
 golang.org/x/net/trace
 # golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae
 ## explicit
@@ -217,7 +269,10 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+# gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
+## explicit
 gopkg.in/yaml.v3
 # gotest.tools v2.2.0+incompatible
 ## explicit
+# moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e
+moul.io/http2curl
