@@ -1,4 +1,4 @@
-package http
+package httpserver
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	l "github.com/treastech/logger"
 )
 
-func (pc *PortController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (pc *Ports) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Recoverer, middleware.RequestID, l.Logger(pc.logger))

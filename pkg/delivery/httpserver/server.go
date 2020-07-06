@@ -1,5 +1,4 @@
-// http describes http_server that handles user data that is stored in database.
-package http
+package httpserver
 
 import (
 	"errors"
@@ -16,39 +15,37 @@ import (
 
 const errorTag = "http"
 
-var json = jsoniter.Config{
-	EscapeHTML:                    false,
-	ObjectFieldMustBeSimpleString: true, // do not unescape object field
-}.Froze()
+var json = jsoniter.ConfigDefault
 
 type PortService interface {
 	Get(id string) (*domain.Port, error)
 }
 
-type PortController struct {
+type Ports struct {
 	service PortService
 	logger  *zap.Logger
 }
 
-func New(srvc PortService, logger *zap.Logger) *PortController {
-	return &PortController{
+func New(srvc PortService, logger *zap.Logger) *Ports {
+	return &Ports{
 		service: srvc,
 		logger:  logger,
 	}
 }
 
-func (pc *PortController) Get(w http.ResponseWriter, r *http.Request) {
+func (pc *Ports) Get(w http.ResponseWriter, r *http.Request) {
 	reqID := middleware.GetReqID(r.Context())
 	portID := chi.URLParam(r, "portID")
 	rLog := pc.logger.With(zap.String("reqId", reqID), zap.String("portId", portID))
 	port, err := pc.service.Get(portID)
+
 	if err == nil {
 		err = renderData(w, http.StatusOK, port)
 	} else {
 		err = renderError(err, w, rLog)
 	}
 	if err != nil {
-		rLog.Error(fmt.Errorf("[%v] get: %w", errorTag, err).Error())
+		rLog.Error(fmt.Errorf("[%v] render error: %w", errorTag, err).Error())
 	}
 }
 
@@ -63,7 +60,7 @@ func renderError(err error, w http.ResponseWriter, logger *zap.Logger) error {
 	case errors.Is(err, service.ErrPortMissingID):
 		err = renderData(w, http.StatusBadRequest, message{M: http.StatusText(http.StatusBadRequest)})
 	default:
-		logger.Error(fmt.Errorf("[%v] render error: %w", errorTag, err).Error())
+		logger.Error(fmt.Errorf("[%v]: %w", errorTag, err).Error())
 		err = renderData(w, http.StatusInternalServerError, message{M: http.StatusText(http.StatusInternalServerError)})
 	}
 	return err

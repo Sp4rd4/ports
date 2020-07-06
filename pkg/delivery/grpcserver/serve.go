@@ -1,4 +1,4 @@
-package grpc
+package grpcserver
 
 import (
 	"net"
@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func (ps *PortServer) Serve(lis net.Listener) error {
+func (ps *Ports) Serve(lis net.Listener) error {
 	ps.grpcServer = grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_zap.UnaryServerInterceptor(ps.logger),
@@ -21,6 +21,6 @@ func (ps *PortServer) Serve(lis net.Listener) error {
 	return ps.grpcServer.Serve(lis)
 }
 
-func (ps *PortServer) GracefulStop() {
+func (ps *Ports) GracefulStop() {
 	ps.grpcServer.GracefulStop()
 }

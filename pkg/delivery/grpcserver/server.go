@@ -1,4 +1,4 @@
-package grpc
+package grpcserver
 
 import (
 	"context"
@@ -22,18 +22,18 @@ type PortService interface {
 	Get(id string) (*domain.Port, error)
 }
 
-type PortServer struct {
+type Ports struct {
 	grpcServer *grpc.Server
 	service    PortService
 	logger     *zap.Logger
 }
 
-func New(srvc PortService, logger *zap.Logger) *PortServer {
-	return &PortServer{service: srvc, logger: logger}
+func New(srvc PortService, logger *zap.Logger) *Ports {
+	return &Ports{service: srvc, logger: logger}
 }
 
-func (ps *PortServer) Get(ctx context.Context, req *proto.PortRequest) (*proto.Port, error) {
-	port, err := ps.service.Get(req.Id)
+func (ps *Ports) Get(ctx context.Context, req *proto.PortRequest) (*proto.Port, error) {
+	port, err := ps.service.Get(req.GetId())
 	if err != nil {
 		ps.logger.Error(fmt.Errorf("[%v] get: %w", errorTag, err).Error())
 	}
@@ -41,7 +41,7 @@ func (ps *PortServer) Get(ctx context.Context, req *proto.PortRequest) (*proto.P
 	return proto.PortDomainToProto(port), convertErrToProto(err)
 }
 
-func (ps *PortServer) Save(ctx context.Context, req *proto.Port) (*ptypes.Empty, error) {
+func (ps *Ports) Save(ctx context.Context, req *proto.Port) (*ptypes.Empty, error) {
 	err := ps.service.Save(proto.PortProtoToDomain(req))
 	if err != nil {
 		ps.logger.Error(fmt.Errorf("[%v] save: %w", errorTag, err).Error())
