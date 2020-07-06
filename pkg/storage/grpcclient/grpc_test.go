@@ -47,7 +47,7 @@ func (s *GRPCTestSuite) SetupSuite() {
 	s.storage = grpcclient.New(s.mock)
 }
 
-var testError = errors.New("test")
+var errFoo = errors.New("test")
 
 var examplesSave = []struct {
 	name   string
@@ -61,8 +61,8 @@ var examplesSave = []struct {
 	},
 	{
 		name:   "Test error",
-		errSet: testError,
-		errGot: testError,
+		errSet: errFoo,
+		errGot: errFoo,
 	},
 }
 
@@ -96,8 +96,8 @@ var examplesGet = []struct {
 	},
 	{
 		name:         "Test error",
-		errSet:       testError,
-		errGot:       testError,
+		errSet:       errFoo,
+		errGot:       errFoo,
 		memory:       &domain.Port{ID: "id", City: "city", Name: "Port"},
 		grpcResponse: nil,
 		expected:     nil,

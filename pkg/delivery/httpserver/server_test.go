@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/sp4rd4/ports/pkg/delivery/httpserver"
 	"github.com/sp4rd4/ports/pkg/domain"
 	"github.com/stretchr/testify/assert"
@@ -27,9 +26,7 @@ func (ms *mockService) Get(id string) (*domain.Port, error) {
 }
 
 var (
-	testError = errors.New("test")
-
-	json = jsoniter.ConfigDefault
+	errFoo = errors.New("test")
 )
 
 var examplesGet = []struct {
@@ -65,8 +62,8 @@ var examplesGet = []struct {
 	},
 	{
 		name:       "Test error",
-		errService: testError,
-		errLogged:  testError,
+		errService: errFoo,
+		errLogged:  errFoo,
 		id:         "AEAJM",
 		status:     http.StatusInternalServerError,
 		port:       nil,

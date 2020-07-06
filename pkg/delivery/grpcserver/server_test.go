@@ -32,7 +32,7 @@ func (ms *mockService) Save(p *domain.Port) error {
 }
 
 var (
-	testError = errors.New("test")
+	errFoo = errors.New("test")
 )
 
 type GRPCTestSuite struct {
@@ -83,8 +83,8 @@ var examplesGet = []struct {
 	},
 	{
 		name:       "Test error",
-		errService: testError,
-		errLogged:  testError,
+		errService: errFoo,
+		errLogged:  errFoo,
 		id:         "AEAJM",
 		status:     codes.Internal,
 		port:       nil,
@@ -163,8 +163,8 @@ var examplesSave = []struct {
 	},
 	{
 		name:       "Test error",
-		errService: testError,
-		errLogged:  testError,
+		errService: errFoo,
+		errLogged:  errFoo,
 		id:         "AEAJM",
 		status:     codes.Internal,
 		port:       &domain.Port{},

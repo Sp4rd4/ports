@@ -53,7 +53,7 @@ var examplesLoad = []struct {
 		name:       "No error",
 		errStorage: nil,
 		ports: []*domain.Port{
-			&domain.Port{
+			{
 				ID:      "AEAJM",
 				Name:    "Ajman",
 				City:    "Ajman",
@@ -69,7 +69,7 @@ var examplesLoad = []struct {
 				Unlocs:   domain.StringArray{"AEAJM"},
 				Code:     "52000",
 			},
-			&domain.Port{
+			{
 				ID:      "ZAPLZ",
 				Name:    "Port Elizabeth",
 				City:    "Port Elizabeth",
@@ -89,7 +89,7 @@ var examplesLoad = []struct {
 	},
 	{
 		name:       "Test error",
-		errStorage: testError,
+		errStorage: errFoo,
 		ports:      nil,
 	},
 	{

@@ -27,15 +27,17 @@ var examplesLoad = []struct {
 		result: nil,
 	},
 	{
-		name:   "Incorrect json",
+		name: "Incorrect json",
+		//nolint
 		reader: strings.NewReader(`{"name":"Pretoria","coordinates":[28.22,-25.7],"city":"Pretoria","province":"Gauteng","country":"South Africa","alias":[],"regions":[],"timezone":"Africa/Johannesburg","unlocs":["ZAPRY"]}`),
 		result: nil,
 	},
 	{
-		name:   "Correct json",
+		name: "Correct json",
+		//nolint
 		reader: strings.NewReader(`{"AEAJM":{"name":"Ajman","city":"Ajman","country":"United Arab Emirates","alias":[],"regions":[],"coordinates":[55.5136433,25.4052165],"province":"Ajman","timezone":"Asia/Dubai","unlocs":["AEAJM"],"code":"52000"},"ZAPLZ":{"name":"Port Elizabeth","city":"Port Elizabeth","country":"South Africa","alias":[],"regions":[],"coordinates":[25.5207358,-33.7139247],"province":"Eastern Cape","timezone":"Africa/Johannesburg","unlocs":["ZAPLZ"],"code":"79145"}}`),
 		result: []*domain.Port{
-			&domain.Port{
+			{
 				ID:      "AEAJM",
 				Name:    "Ajman",
 				City:    "Ajman",
@@ -51,7 +53,7 @@ var examplesLoad = []struct {
 				Unlocs:   domain.StringArray{"AEAJM"},
 				Code:     "52000",
 			},
-			&domain.Port{
+			{
 				ID:      "ZAPLZ",
 				Name:    "Port Elizabeth",
 				City:    "Port Elizabeth",

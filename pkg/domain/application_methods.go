@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	//nolint
 	json = jsoniter.ConfigDefault
 
 	ErrTypeAssertion = errors.New("type assertion .([]byte) failed")

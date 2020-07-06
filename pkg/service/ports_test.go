@@ -22,7 +22,7 @@ func (ms *MockPortStorage) Get(id string) (*domain.Port, error) {
 	return ms.port, ms.err
 }
 
-var testError = errors.New("test")
+var errFoo = errors.New("test")
 
 var examplesSave = []struct {
 	name        string
@@ -38,8 +38,8 @@ var examplesSave = []struct {
 	},
 	{
 		name:        "Test error",
-		errStorage:  testError,
-		errExpected: testError,
+		errStorage:  errFoo,
+		errExpected: errFoo,
 		port:        &domain.Port{ID: "id", City: "city", Name: "Port"},
 	},
 	{
@@ -86,8 +86,8 @@ var examplesGet = []struct {
 	},
 	{
 		name:        "Test error",
-		errStorage:  testError,
-		errExpected: testError,
+		errStorage:  errFoo,
+		errExpected: errFoo,
 		id:          "id",
 		memory:      &domain.Port{ID: "id", City: "city", Name: "Port"},
 		expected:    nil,

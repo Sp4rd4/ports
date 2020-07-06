@@ -15,6 +15,7 @@ import (
 
 const errorTag = "http"
 
+//nolint
 var json = jsoniter.ConfigDefault
 
 type PortService interface {
