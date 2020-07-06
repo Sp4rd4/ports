@@ -19,7 +19,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/json-iterator/go v1.1.10
 	github.com/klauspost/compress v1.10.10 // indirect
-	github.com/klauspost/cpuid v1.3.1 // indirect
 	github.com/lib/pq v1.7.0
 	github.com/machinebox/progress v0.2.0
 	github.com/matryer/is v1.4.0 // indirect
